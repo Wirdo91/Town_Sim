@@ -1,10 +1,8 @@
 ﻿using Extensions;
 using NaughtyAttributes;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using Debug = UnityEngine.Debug;
 using System.Diagnostics;
@@ -20,6 +18,10 @@ public class WorldGenerator : MonoBehaviour
 
 	[SerializeField]
 	private Transform _worldCellPrefab = default;
+	[SerializeField]
+	private Water _waterPrefab = default;
+	[SerializeField]
+	private Zone _waterZone = default;
 
 	[SerializeField]
 	private float _zoneEdgeRange = 0.1f;
@@ -93,6 +95,18 @@ public class WorldGenerator : MonoBehaviour
 		GenerateMaps();
 
 		GenerateGraph();
+
+		foreach (Vector2 waterPos in MapZones[_waterZone])
+		{
+			foreach (Vector3 neighbor in waterPos.Convert().Neighbors())
+			{
+				if (_zoneMap[(int) neighbor.x, (int) neighbor.z] != _waterZone)
+				{
+					Instantiate(_waterPrefab, transform);
+					continue;
+				}
+			}
+		}
 
 		foreach (ZoneWeight zone in _zoneWeights)
 		{
@@ -327,6 +341,7 @@ public class WorldGenerator : MonoBehaviour
 	[Button("Generate Graph")]
 	private void GenerateGraph()
 	{
+		//obstruction grid should reflect Water, Plants and Creatures
 		_graph = GraphHelper.GenerateGraph(new bool[_width, _height], _speedModifierMap, Vector3.zero, Vector2.one, true);
 	}
 

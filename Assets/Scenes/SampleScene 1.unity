@@ -1247,5 +1247,17 @@ PrefabInstance:
       propertyPath: _zoneEdgeRange
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 7365050913071486461, guid: dd18fe0af054fce43b45c79f91d546f2,
+        type: 3}
+      propertyPath: _waterPrefab
+      value: 
+      objectReference: {fileID: 592013841843688158, guid: fefcbcbf3b4003643be215897ec735ea,
+        type: 3}
+    - target: {fileID: 7365050913071486461, guid: dd18fe0af054fce43b45c79f91d546f2,
+        type: 3}
+      propertyPath: _waterZone
+      value: 
+      objectReference: {fileID: 11400000, guid: dbf247821f1697a46897603ae464cae1,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dd18fe0af054fce43b45c79f91d546f2, type: 3}
