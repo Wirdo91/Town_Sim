@@ -1,0 +1,9 @@
+September 1st
+	Created Perlin noise Generation
+	Added simple zone colors
+September 7th
+	Improved on Perlin Noise World Generation (More realistic)
+		Still issues with mountains
+	Added class for zone colors and range
+	Added simple unit
+		Random walk
