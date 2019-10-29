@@ -9,6 +9,9 @@ public class CreatureGenerator : MonoBehaviour
 	[SerializeField]
 	private List<CreatureSpawn> _creatures = default;
 
+	[SerializeField]
+	private float _spawnDelay = 5f;
+
 	private List<CreatureSpawn> _creaturesToSpawn = default;
 
 	private WorldGenerator _world;
@@ -31,23 +34,30 @@ public class CreatureGenerator : MonoBehaviour
 			return;
 		}
 
-		for (int i = _creaturesToSpawn.Count - 1; i >= 0; i--)
+		if (_spawnDelay < 0 && _creaturesToSpawn.Count > 0)
 		{
-			if (TimeControl.instance.elapsedTime > _creaturesToSpawn[i].timeForSpawn)
+			for (int i = _creaturesToSpawn.Count - 1; i >= 0; i--)
 			{
-				for (int c = 0; c < _creaturesToSpawn[i].amountToSpawn; c++)
+				if (TimeControl.instance.elapsedTime > _creaturesToSpawn[i].timeForSpawn)
 				{
-					CreatureBase newCreature = Instantiate(_creaturesToSpawn[i].creaturePrefab, transform);
+					for (int c = 0; c < _creaturesToSpawn[i].amountToSpawn; c++)
+					{
+						CreatureBase newCreature = Instantiate(_creaturesToSpawn[i].creaturePrefab, _world.creatureParent);
 
-					newCreature.transform.localPosition = _world.MapZones[_creaturesToSpawn[i].zoneToSpawnIn].GetRandomElement().Convert();
+						newCreature.transform.localPosition = _world.MapZones[_creaturesToSpawn[i].zoneToSpawnIn].GetRandomElement().Convert();
+					}
+
+					_creaturesToSpawn.RemoveAt(i);
 				}
-
-				_creaturesToSpawn.RemoveAt(i);
+				else
+				{
+					break;
+				}
 			}
-			else
-			{
-				break;
-			}
+		}
+		else
+		{
+			_spawnDelay -= Time.deltaTime;
 		}
 	}
 

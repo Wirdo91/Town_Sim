@@ -48,7 +48,7 @@ public class PlantGenerator : MonoBehaviour, IGraphDataCollection
 			return;
 		}
 
-		PlantBase newPlant = Instantiate(plantPrefab, transform);
+		PlantBase newPlant = Instantiate(plantPrefab, _world.plantParent);
 		newPlant.transform.localPosition = position;
 		newPlant.transform.localRotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
 		//newPlant.gameObject.hideFlags = HideFlags.HideInHierarchy;

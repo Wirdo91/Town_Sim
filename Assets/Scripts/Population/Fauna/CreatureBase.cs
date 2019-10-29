@@ -71,10 +71,25 @@ public abstract class CreatureBase : MonoBehaviour
 
 	private void UpdateValues()
 	{
-		_currentHunger += Time.deltaTime * _energyUsage * 10;
-		_currentThirst += Time.deltaTime * _energyUsage * 10;
+		_currentHunger += Time.deltaTime * _energyUsage;
+		_currentHunger = Mathf.Clamp(_currentHunger, -0, 100f);
+		_currentThirst += Time.deltaTime * _energyUsage;
+		_currentThirst = Mathf.Clamp(_currentThirst, -0, 100f);
+
+		if (_currentHunger >= 100)
+		{
+			Debug.Log("Died of Hunger");
+			Destroy(gameObject);
+		}
+		else if (_currentThirst >= 100)
+		{
+			Debug.Log("Died of Thirst");
+			Destroy(gameObject);
+		}
+
 		//Maybe not multiply energyUsage
 		_matingDrive += Time.deltaTime * _energyUsage;
+		_matingDrive = Mathf.Clamp(_matingDrive, 0, 100f);
 	}
 
 	private void UpdateAction()
@@ -114,7 +129,33 @@ public abstract class CreatureBase : MonoBehaviour
 		else if (_currentThirst >= _matingDrive)
 		{
 			//If target not already water
-			//Find water
+			//Find waterif (_currentTarget?.GetComponent<Bush>() == null)
+			if (_currentTarget?.GetComponent<Water>() == null)
+			{
+				//Find water
+				List<Collider> objectsSeen = Physics.OverlapSphere(transform.position, _sensoryDistance).Where(obj => obj.GetComponent<Water>() != null).ToList();
+
+				if (objectsSeen.Count > 0)
+				{
+					_currentTarget = objectsSeen.FindNearest(transform.position).transform;
+
+					_currentPath = AStar.FindPath(GraphHelper.CurrentGraph, transform.position, _currentTarget.position);
+					_currentPathIndex = 1;
+
+					if (transform.position.Neighbors().Contains(_currentTarget.position))
+					{
+						_currentAction = InteractWithTarget;
+					}
+					else
+					{
+						_currentAction = MoveTowardsTarget;
+					}
+				}
+				else
+				{
+					_currentTarget = null;
+				}
+			}
 		}
 		else
 		{
@@ -139,20 +180,18 @@ public abstract class CreatureBase : MonoBehaviour
 
 		void Wander()
 		{
-			Debug.Log("Wander");
-			transform.position = transform.position.Neighbors().GetRandomElement();
+
+			transform.position = transform.position.Neighbors().Where((neighbor) => GraphHelper.CurrentGraph.IsInsideGraph(neighbor)).ToList().GetRandomElement();
 			//Move should check map size
 		}
 		void MoveTowardsTarget()
 		{
 			if (_currentPathIndex < _currentPath.Count)
 			{
-				Debug.Log("Move towards target");
 				transform.position = _currentPath[_currentPathIndex++];
 			}
 			else
 			{
-				Debug.Log("Path is empty");
 				Wander();
 			}
 		}
@@ -162,7 +201,11 @@ public abstract class CreatureBase : MonoBehaviour
 			{
 				float amountEaten = _currentTarget.GetComponent<Bush>().Eat(_currentHunger);
 				_currentHunger -= amountEaten;
-				Debug.Log($"Nom Nom ({amountEaten})");
+			}
+			else if (_currentTarget.GetComponent<Water>() != null)
+			{
+				float amountDrunk = _currentTarget.GetComponent<Water>().Drink(_currentThirst);
+				_currentThirst -= amountDrunk;
 			}
 
 			_currentTarget = null;

@@ -75,7 +75,17 @@ public class Graph {
 		
 		return signV1V2 == signV2V3 && signV2V3 == signV3V1;
 	}
-	
+
+	public bool IsInsideGraph(Vector3 position)
+	{
+		if (position.x < 0 || position.z < 0 ||
+			position.x >= GraphGrid.GetLength(0) || position.z >= GraphGrid.GetLength(1))
+		{
+			return false;
+		}
+		return true;
+	}
+
 	private void SetConnectingNodes(bool useDiagonalMoves)
 	{
 		int width = GraphGrid.GetLength(0);

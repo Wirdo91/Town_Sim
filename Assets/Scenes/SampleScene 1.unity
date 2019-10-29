@@ -120,6 +120,36 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &184706610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 184706611}
+  m_Layer: 0
+  m_Name: Creatures
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &184706611
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 184706610}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &205008900 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7365050913071486462, guid: dd18fe0af054fce43b45c79f91d546f2,
@@ -141,8 +171,69 @@ MonoBehaviour:
   _creatures:
   - creaturePrefab: {fileID: -2812879092177582951, guid: 4a554de8b6c73d046a393688176b7ac1,
       type: 3}
-    amountToSpawn: 2
+    amountToSpawn: 20
     zoneToSpawnIn: {fileID: 11400000, guid: dcb0fc94f0fdcf0488e0d80c1758c8ec, type: 2}
+  _spawnDelay: 25
+--- !u!1 &274741869
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 274741870}
+  m_Layer: 0
+  m_Name: Plants
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &274741870
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 274741869}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &742247429
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 742247430}
+  m_Layer: 0
+  m_Name: Water
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &742247430
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742247429}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -591,7 +682,7 @@ PrefabInstance:
     - target: {fileID: 2455920351024210711, guid: 33313438b0dcd9747943953e38401c9f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2455920351024210711, guid: 33313438b0dcd9747943953e38401c9f,
         type: 3}
@@ -665,7 +756,7 @@ PrefabInstance:
     - target: {fileID: 6040867230576533389, guid: 716a0943554a2fa48ae8ce6777bec1db,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6040867230576533389, guid: 716a0943554a2fa48ae8ce6777bec1db,
         type: 3}
@@ -1259,5 +1350,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: dbf247821f1697a46897603ae464cae1,
         type: 2}
+    - target: {fileID: 7365050913071486461, guid: dd18fe0af054fce43b45c79f91d546f2,
+        type: 3}
+      propertyPath: _waterParent
+      value: 
+      objectReference: {fileID: 742247430}
+    - target: {fileID: 7365050913071486461, guid: dd18fe0af054fce43b45c79f91d546f2,
+        type: 3}
+      propertyPath: _creatureParent
+      value: 
+      objectReference: {fileID: 184706611}
+    - target: {fileID: 7365050913071486461, guid: dd18fe0af054fce43b45c79f91d546f2,
+        type: 3}
+      propertyPath: _plantParent
+      value: 
+      objectReference: {fileID: 274741870}
+    - target: {fileID: 7365050913071486459, guid: dd18fe0af054fce43b45c79f91d546f2,
+        type: 3}
+      propertyPath: _initialPlants
+      value: 100
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dd18fe0af054fce43b45c79f91d546f2, type: 3}

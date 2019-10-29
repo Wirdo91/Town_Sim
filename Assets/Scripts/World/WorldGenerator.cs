@@ -15,6 +15,14 @@ public class WorldGenerator : MonoBehaviour
 	private int _height = 10;
 	[SerializeField]
 	private float _zoomLevel = 1f;
+	[SerializeField]
+	private Transform _plantParent = default;
+	public Transform plantParent => _plantParent;
+	[SerializeField]
+	private Transform _creatureParent = default;
+	public Transform creatureParent => _creatureParent;
+	[SerializeField]
+	private Transform _waterParent = default;
 
 	[SerializeField]
 	private Transform _worldCellPrefab = default;
@@ -100,9 +108,11 @@ public class WorldGenerator : MonoBehaviour
 		{
 			foreach (Vector3 neighbor in waterPos.Convert().Neighbors())
 			{
-				if (_zoneMap[(int) neighbor.x, (int) neighbor.z] != _waterZone)
+				if (((neighbor.x > 0 && neighbor.z > 0) && (neighbor.x < _zoneMap.GetLength(0) && neighbor.z < _zoneMap.GetLength(1))) && _zoneMap[(int) neighbor.x, (int) neighbor.z] != _waterZone)
 				{
-					Instantiate(_waterPrefab, transform);
+					Water water = Instantiate(_waterPrefab, _waterParent);
+					water.transform.localPosition = neighbor;
+
 					continue;
 				}
 			}
