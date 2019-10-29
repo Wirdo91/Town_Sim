@@ -76,6 +76,10 @@ public abstract class CreatureBase : MonoBehaviour
 		_currentThirst += Time.deltaTime * _energyUsage;
 		_currentThirst = Mathf.Clamp(_currentThirst, -0, 100f);
 
+		//FIXME Add threshold for food and drink, when they should be highest priority
+		//FIXME Add UI for creatures to show hunger,thirst,mate and current action
+		//Same as https://www.youtube.com/watch?v=r_It_X7v-1E
+
 		if (_currentHunger >= 100)
 		{
 			Debug.Log("Died of Hunger");
