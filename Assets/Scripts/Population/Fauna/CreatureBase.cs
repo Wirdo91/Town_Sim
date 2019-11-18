@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public abstract class CreatureBase : MonoBehaviour
+public abstract class CreatureBase : MonoBehaviour, CreatureUI.CreatureUIData
 {
+	[SerializeField]
+	private Transform _model = default;
+
 	//Hunger (Foodtype? (herb(tree, bush)(size maybe)/carni(risk/reward)(estimated damage for food amount(maybe base on maxEnergy))/omnivore)
 	//Thirst (Need to add water object)
 
@@ -13,8 +16,10 @@ public abstract class CreatureBase : MonoBehaviour
 	//Sex
 	private float _currentHunger = 0; //++
 	private float _currentThirst = 0; //++
-	//private float _currentEnergy = 100; //-- (0 == dead) //Should maybe change to be a multiplier for hunger/thirst
+									  //private float _currentEnergy = 100; //-- (0 == dead) //Should maybe change to be a multiplier for hunger/thirst
 	private float _matingDrive = 0; //++
+
+	private float _primaryLimit = 50;
 	//What about sleep?
 	//Age? Maybe lifetime affected by movespeed (Rabbits (fast, short lifespan), elephant (slow, long lifespan))
 	// - Maybe have a maxEnergy instead of age, and have that decline over time
@@ -49,22 +54,30 @@ public abstract class CreatureBase : MonoBehaviour
 	/// <summary>
 	/// How far to find stuff
 	/// </summary>
-	private float _sensoryDistance = 5f;
+	private float _sensoryDistance = 50f;
 
 	private float _moveTimer = 0;
 
-	private Action _currentAction = default;
+	private AvailableAction _currentAction = AvailableAction.None;
 
 	private Transform _currentTarget = default;
 	private int _currentPathIndex = 0;
 	private List<Vector3> _currentPath = default;
-	
+
+	private enum AvailableAction
+	{
+		None,
+		Move,
+		Interact
+	}
+
 	private void Update()
 	{
 		_moveTimer += Time.deltaTime * _energyUsage;
 
 		UpdateValues();
-		UpdateAction();
+
+		UpdateTarget();
 
 		DoAction();
 	}
@@ -96,10 +109,41 @@ public abstract class CreatureBase : MonoBehaviour
 		_matingDrive = Mathf.Clamp(_matingDrive, 0, 100f);
 	}
 
-	private void UpdateAction()
+	void UpdateTarget()
 	{
 		//Should also check for enemies
-		if (_currentHunger >= _currentThirst && _currentHunger >= _matingDrive)
+		if (_currentHunger > Mathf.Max(new[] { _currentThirst, _matingDrive }) || _currentHunger > _primaryLimit)
+		{
+			FindFood();
+		}
+		else if (_currentThirst > Mathf.Max(new[] { _currentHunger, _matingDrive }) || _currentThirst > _primaryLimit)
+		{
+			FindWater();
+		}
+		else if (_matingDrive > Mathf.Max(new[] { _currentHunger, _currentThirst }))
+		{
+			//Find mate
+			FindMate();
+		}
+		else
+		{
+			_currentTarget = null;
+		}
+
+		if (_currentTarget == null)
+		{
+			_currentAction = AvailableAction.None;
+		}
+		else if (transform.position.Neighbors().Contains(_currentTarget.position))
+		{
+			_currentAction = AvailableAction.Interact;
+		}
+		else
+		{
+			_currentAction = AvailableAction.Move;
+		}
+
+		void FindFood()
 		{
 			//Get correct type food
 			//If target not already food
@@ -114,15 +158,6 @@ public abstract class CreatureBase : MonoBehaviour
 
 					_currentPath = AStar.FindPath(GraphHelper.CurrentGraph, transform.position, _currentTarget.position);
 					_currentPathIndex = 1;
-
-					if (transform.position.Neighbors().Contains(_currentTarget.position))
-					{
-						_currentAction = InteractWithTarget;
-					}
-					else
-					{
-						_currentAction = MoveTowardsTarget;
-					}
 				}
 				else
 				{
@@ -130,7 +165,7 @@ public abstract class CreatureBase : MonoBehaviour
 				}
 			}
 		}
-		else if (_currentThirst >= _matingDrive)
+		void FindWater()
 		{
 			//If target not already water
 			//Find waterif (_currentTarget?.GetComponent<Bush>() == null)
@@ -145,15 +180,6 @@ public abstract class CreatureBase : MonoBehaviour
 
 					_currentPath = AStar.FindPath(GraphHelper.CurrentGraph, transform.position, _currentTarget.position);
 					_currentPathIndex = 1;
-
-					if (transform.position.Neighbors().Contains(_currentTarget.position))
-					{
-						_currentAction = InteractWithTarget;
-					}
-					else
-					{
-						_currentAction = MoveTowardsTarget;
-					}
 				}
 				else
 				{
@@ -161,61 +187,12 @@ public abstract class CreatureBase : MonoBehaviour
 				}
 			}
 		}
-		else
-		{
-			//Find mate
-		}
-
-		if (_currentTarget == null)
-		{
-			_currentAction = Wander;
-		}
-		else
-		{
-			if (transform.position.Neighbors().Contains(_currentTarget.position))
-			{
-				_currentAction = InteractWithTarget;
-			}
-			else
-			{
-				_currentAction = MoveTowardsTarget;
-			}
-		}
-
-		void Wander()
+		void FindMate()
 		{
 
-			transform.position = transform.position.Neighbors().Where((neighbor) => GraphHelper.CurrentGraph.IsInsideGraph(neighbor)).ToList().GetRandomElement();
-			//Move should check map size
-		}
-		void MoveTowardsTarget()
-		{
-			if (_currentPathIndex < _currentPath.Count)
-			{
-				transform.position = _currentPath[_currentPathIndex++];
-			}
-			else
-			{
-				Wander();
-			}
-		}
-		void InteractWithTarget()
-		{
-			if (_currentTarget.GetComponent<Bush>() != null)
-			{
-				float amountEaten = _currentTarget.GetComponent<Bush>().Eat(_currentHunger);
-				_currentHunger -= amountEaten;
-			}
-			else if (_currentTarget.GetComponent<Water>() != null)
-			{
-				float amountDrunk = _currentTarget.GetComponent<Water>().Drink(_currentThirst);
-				_currentThirst -= amountDrunk;
-			}
-
-			_currentTarget = null;
 		}
 	}
-
+	
 	private void DoAction()
 	{
 		if (_moveTimer >= _moveDelay)
@@ -227,7 +204,79 @@ public abstract class CreatureBase : MonoBehaviour
 			//-Drink
 			//-Mate
 
-			_currentAction();
+			switch (_currentAction)
+			{
+				case AvailableAction.None:
+				case AvailableAction.Move:
+					Move();
+					break;
+				case AvailableAction.Interact:
+					InteractWithTarget();
+					break;
+			}
 		}
+	}
+
+	void Move()
+	{
+		Vector3 prevPos = transform.position;
+
+		switch (_currentAction)
+		{
+			case AvailableAction.None:
+				transform.position = Wander();
+				break;
+			case AvailableAction.Move:
+				transform.position = MoveTowardsTarget();
+				break;
+		}
+
+		//Move should check map size
+		Vector3 newDirection = transform.position - prevPos;
+		newDirection.Normalize();
+
+		_model.rotation = Quaternion.LookRotation(newDirection, Vector3.up);
+		
+		Vector3 Wander()
+		{
+			return transform.position.Neighbors().Where((neighbor) => GraphHelper.CurrentGraph.IsInsideGraph(neighbor) && GraphHelper.CurrentGraph.GetNode(neighbor).walkable).ToList().GetRandomElement();
+		}
+		Vector3 MoveTowardsTarget()
+		{
+			if (_currentPathIndex < _currentPath.Count)
+			{
+				return transform.position = _currentPath[_currentPathIndex++];
+			}
+			else
+			{
+				return Wander();
+			}
+		}
+	}
+
+	void InteractWithTarget()
+	{
+		if (_currentTarget.GetComponent<Bush>() != null)
+		{
+			float amountEaten = _currentTarget.GetComponent<Bush>().Eat(_currentHunger);
+			_currentHunger -= amountEaten;
+		}
+		else if (_currentTarget.GetComponent<Water>() != null)
+		{
+			float amountDrunk = _currentTarget.GetComponent<Water>().Drink(_currentThirst);
+			_currentThirst -= amountDrunk;
+		}
+
+		_currentTarget = null;
+	}
+
+	public virtual List<CreatureUI.DataSet> GetData()
+	{
+		return new List<CreatureUI.DataSet>
+		{
+			new CreatureUI.DataSet<float>(){type = CreatureUI.UIType.Slider, color = Color.blue, name = "Thirst", getValue = ()=> {return _currentThirst / 100; } },
+			new CreatureUI.DataSet<float>(){type = CreatureUI.UIType.Slider, color = Color.green, name = "Hunger", getValue = ()=> {return _currentHunger / 100; } },
+			new CreatureUI.DataSet<float>(){type = CreatureUI.UIType.Slider, color = Color.cyan, name = "Mate", getValue = ()=> {return _matingDrive / 100; } },
+		};
 	}
 }
