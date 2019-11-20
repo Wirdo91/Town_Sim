@@ -34,16 +34,16 @@ public class PlantBase : MonoBehaviour
 
 	void Update()
     {
-		if (!_alive)
-		{
-			return;
-		}
-
 		_model.localScale = Vector3.one * (_growth / 100f);
 
 		if (_growth <= 0)
 		{
 			PlantDeath();
+			return;
+		}
+
+		if (!_alive)
+		{
 			return;
 		}
 

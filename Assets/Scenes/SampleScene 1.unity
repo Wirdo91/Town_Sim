@@ -171,9 +171,9 @@ MonoBehaviour:
   _creatures:
   - creaturePrefab: {fileID: -2812879092177582951, guid: 4a554de8b6c73d046a393688176b7ac1,
       type: 3}
-    amountToSpawn: 1
+    amountToSpawn: 30
     zoneToSpawnIn: {fileID: 11400000, guid: dcb0fc94f0fdcf0488e0d80c1758c8ec, type: 2}
-  _spawnDelay: 10
+  _spawnDelay: 48
 --- !u!1 &274741869
 GameObject:
   m_ObjectHideFlags: 0

@@ -76,12 +76,7 @@ public class PlantGenerator : MonoBehaviour, IGraphDataCollection
 
 	private void Replant(Vector3 origin, PlantBase plant)
 	{
-		Vector3 newPos = new Vector3(-plant.replantRange, 0, -plant.replantRange);
-
-		newPos.x += Random.Range(0, 1 + (2 * plant.replantRange));
-		newPos.z += Random.Range(0, 1 + (2 * plant.replantRange));
-
-		PlantPlant(origin + newPos, plant);
+		PlantPlant(origin.Neighbors(plant.replantRange).GetRandomElement(), plant);
 	}
 
 	public List<string> GetIdentifiers(Action<IGraphDataCollection, string> onDataChanged)

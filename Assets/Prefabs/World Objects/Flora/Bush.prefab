@@ -721,8 +721,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _model: {fileID: 1795344449167067247}
   _replantChance: 0.6
-  _replantDelay: 3
-  _replantRange: 1
+  _replantDelay: 24
+  _replantRange: 3
   _growthSpeed: 1
 --- !u!135 &290676544190427240
 SphereCollider:

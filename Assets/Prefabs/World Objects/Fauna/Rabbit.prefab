@@ -417,6 +417,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: CreatureUI
       objectReference: {fileID: 0}
+    - target: {fileID: 4201279255734454362, guid: 970410d7bcddc204e8597d1eebb28085,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6316703688768699656, guid: 970410d7bcddc204e8597d1eebb28085,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -562,16 +567,6 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8097269671582818753, guid: 970410d7bcddc204e8597d1eebb28085,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8097269671582818753, guid: 970410d7bcddc204e8597d1eebb28085,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5920985865124781736, guid: 970410d7bcddc204e8597d1eebb28085,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -595,6 +590,16 @@ PrefabInstance:
     - target: {fileID: 5920985865124781736, guid: 970410d7bcddc204e8597d1eebb28085,
         type: 3}
       propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8097269671582818753, guid: 970410d7bcddc204e8597d1eebb28085,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8097269671582818753, guid: 970410d7bcddc204e8597d1eebb28085,
+        type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

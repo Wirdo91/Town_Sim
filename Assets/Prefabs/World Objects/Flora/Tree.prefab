@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _model: {fileID: 1631646529216788712}
-  _replantChance: 1
-  _replantDelay: 5
-  _replantRange: 3
+  _replantChance: 0.3
+  _replantDelay: 120
+  _replantRange: 10
   _growthSpeed: 0.5
 --- !u!1 &1759366590267176976
 GameObject:

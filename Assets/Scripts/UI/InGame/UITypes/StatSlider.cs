@@ -19,7 +19,7 @@ public class StatSlider : MonoBehaviour
 
 		_name.text = _data.name;
 
-		_slider.colors = new ColorBlock() { normalColor = data.color }; 
+		_slider.colors = new ColorBlock() { normalColor = data.color, disabledColor = data.color }; 
 	}
 
 	private void Update()

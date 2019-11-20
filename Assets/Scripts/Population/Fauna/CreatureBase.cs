@@ -147,7 +147,7 @@ public abstract class CreatureBase : MonoBehaviour, CreatureUI.CreatureUIData
 		{
 			//Get correct type food
 			//If target not already food
-			if (_currentTarget?.GetComponent<Bush>() == null)
+			if (_currentTarget == null || _currentTarget.GetComponent<Bush>() == null)
 			{
 				//Find food
 				List<Collider> objectsSeen = Physics.OverlapSphere(transform.position, _sensoryDistance).Where(obj => obj.GetComponent<Bush>() != null).ToList();
@@ -169,7 +169,7 @@ public abstract class CreatureBase : MonoBehaviour, CreatureUI.CreatureUIData
 		{
 			//If target not already water
 			//Find waterif (_currentTarget?.GetComponent<Bush>() == null)
-			if (_currentTarget?.GetComponent<Water>() == null)
+			if (_currentTarget == null || _currentTarget.GetComponent<Water>() == null)
 			{
 				//Find water
 				List<Collider> objectsSeen = Physics.OverlapSphere(transform.position, _sensoryDistance).Where(obj => obj.GetComponent<Water>() != null).ToList();
@@ -277,6 +277,7 @@ public abstract class CreatureBase : MonoBehaviour, CreatureUI.CreatureUIData
 			new CreatureUI.DataSet<float>(){type = CreatureUI.UIType.Slider, color = Color.blue, name = "Thirst", getValue = ()=> {return _currentThirst / 100; } },
 			new CreatureUI.DataSet<float>(){type = CreatureUI.UIType.Slider, color = Color.green, name = "Hunger", getValue = ()=> {return _currentHunger / 100; } },
 			new CreatureUI.DataSet<float>(){type = CreatureUI.UIType.Slider, color = Color.cyan, name = "Mate", getValue = ()=> {return _matingDrive / 100; } },
+			new CreatureUI.DataSet<string>(){type = CreatureUI.UIType.Text, color = Color.black, name = "Action", getValue = ()=> {return _currentAction.ToString(); } },
 		};
 	}
 }
