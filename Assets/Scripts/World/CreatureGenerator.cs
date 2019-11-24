@@ -44,6 +44,11 @@ public class CreatureGenerator : MonoBehaviour
 					{
 						CreatureBase newCreature = Instantiate(_creaturesToSpawn[i].creaturePrefab, _world.creatureParent);
 
+						if (c > _creaturesToSpawn[i].amountToSpawn / 2)
+						{
+							newCreature.male = true;
+						}
+
 						newCreature.transform.localPosition = _world.MapZones[_creaturesToSpawn[i].zoneToSpawnIn].GetRandomElement().Convert();
 					}
 

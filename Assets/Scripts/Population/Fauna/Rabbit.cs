@@ -4,4 +4,5 @@ using UnityEngine;
 
 public class Rabbit : CreatureBase
 {
+	protected override string race => "Rabbit";
 }

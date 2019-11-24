@@ -9,6 +9,8 @@ public abstract class CreatureBase : MonoBehaviour, CreatureUI.CreatureUIData
 	[SerializeField]
 	private Transform _model = default;
 
+	protected abstract string race { get; }
+
 	//Hunger (Foodtype? (herb(tree, bush)(size maybe)/carni(risk/reward)(estimated damage for food amount(maybe base on maxEnergy))/omnivore)
 	//Thirst (Need to add water object)
 
@@ -64,6 +66,8 @@ public abstract class CreatureBase : MonoBehaviour, CreatureUI.CreatureUIData
 	private int _currentPathIndex = 0;
 	private List<Vector3> _currentPath = default;
 
+	public bool male = false;
+
 	private enum AvailableAction
 	{
 		None,
@@ -109,7 +113,7 @@ public abstract class CreatureBase : MonoBehaviour, CreatureUI.CreatureUIData
 		_matingDrive = Mathf.Clamp(_matingDrive, 0, 100f);
 	}
 
-	void UpdateTarget()
+	private void UpdateTarget()
 	{
 		//Should also check for enemies
 		if (_currentHunger > Mathf.Max(new[] { _currentThirst, _matingDrive }) || _currentHunger > _primaryLimit)
@@ -189,7 +193,27 @@ public abstract class CreatureBase : MonoBehaviour, CreatureUI.CreatureUIData
 		}
 		void FindMate()
 		{
+			//If target not already water
+			//Find waterif (_currentTarget?.GetComponent<Bush>() == null)
+			if (_currentTarget == null || _currentTarget.GetComponent<CreatureBase>() == null)
+			{
+				//Find Creature
+				List<Collider> objectsSeen = Physics.OverlapSphere(transform.position, _sensoryDistance).Where(obj => obj.GetComponent<CreatureBase>() != null &&
+					obj.GetComponent<CreatureBase>().race == race && 
+					obj.GetComponent<CreatureBase>().male != male).ToList();
 
+				if (objectsSeen.Count > 0)
+				{
+					_currentTarget = objectsSeen.FindNearest(transform.position).transform;
+
+					_currentPath = AStar.FindPath(GraphHelper.CurrentGraph, transform.position, _currentTarget.position);
+					_currentPathIndex = 1;
+				}
+				else
+				{
+					_currentTarget = null;
+				}
+			}
 		}
 	}
 	
@@ -217,7 +241,7 @@ public abstract class CreatureBase : MonoBehaviour, CreatureUI.CreatureUIData
 		}
 	}
 
-	void Move()
+	private void Move()
 	{
 		Vector3 prevPos = transform.position;
 
@@ -254,7 +278,7 @@ public abstract class CreatureBase : MonoBehaviour, CreatureUI.CreatureUIData
 		}
 	}
 
-	void InteractWithTarget()
+	private void InteractWithTarget()
 	{
 		if (_currentTarget.GetComponent<Bush>() != null)
 		{
@@ -265,6 +289,16 @@ public abstract class CreatureBase : MonoBehaviour, CreatureUI.CreatureUIData
 		{
 			float amountDrunk = _currentTarget.GetComponent<Water>().Drink(_currentThirst);
 			_currentThirst -= amountDrunk;
+		}
+		else if (_currentTarget.GetComponent<CreatureBase>() != null)
+		{
+			CreatureBase other = _currentTarget.GetComponent<CreatureBase>();
+
+			if (other.race == race && other.male != male)
+			{
+				other.Mate();
+				Mate();
+			}
 		}
 
 		_currentTarget = null;
@@ -279,5 +313,24 @@ public abstract class CreatureBase : MonoBehaviour, CreatureUI.CreatureUIData
 			new CreatureUI.DataSet<float>(){type = CreatureUI.UIType.Slider, color = Color.cyan, name = "Mate", getValue = ()=> {return _matingDrive / 100; } },
 			new CreatureUI.DataSet<string>(){type = CreatureUI.UIType.Text, color = Color.black, name = "Action", getValue = ()=> {return _currentAction.ToString(); } },
 		};
+	}
+
+	public void Mate()
+	{
+		_matingDrive = 0;
+
+		if (!male)
+		{
+			CreatureBase newCreature = Instantiate(this, this.transform.parent);
+			newCreature._currentHunger = 0;
+			newCreature._currentThirst = 0;
+			newCreature._matingDrive = 0;
+
+			Debug.Log("Female mated");
+		}
+		else
+		{
+			Debug.Log("Male mated");
+		}
 	}
 }
